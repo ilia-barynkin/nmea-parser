@@ -6,6 +6,7 @@ The NMEA Parser is a program that parses NMEA log files via C++ stream objects. 
 
 ## TODO
 
+0. Add CRC checking.
 1. Add python front-end with matplotlib or pygame to plot the data.
 2. Add tests.
 3. Implement multithreading.
