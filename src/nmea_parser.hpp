@@ -6,6 +6,7 @@
 #include <string>
 
 #include "nmea_msg.hpp"
+#include "butterworth_filter.hpp"
 
 class DelimitedStringIterator {
 public:
@@ -37,11 +38,14 @@ public:
     NMEAParser(const std::string& filename) : file(filename) {}
 
     double calculateTotalDistance();
+    void filterWTG(VTGMsg& msg);
 
 private:
     std::ifstream file;
 
     double calculateDistance(const GGAMsg& coord0, const GGAMsg& coord1);
+    ButterworthFilter filter;
+
 };
 
 #endif // NMEA_PARSER_HPP

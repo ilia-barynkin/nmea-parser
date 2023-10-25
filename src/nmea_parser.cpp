@@ -107,7 +107,18 @@ double NMEAParser::calculateTotalDistance() {
         } else if (tag == "$GNVTG") {
             si >> speedMsg;
         }
+        else if (tag == "$GNWTG") {
+            si >> speedMsg;
+            filterWTG(speedMsg);
+        }
     }
 
     return result;
+}
+
+void NMEAParser::filterWTG(VTGMsg& msg) {
+    msg.speed1 = filter.filter(msg.speed1);
+    msg.speed2 = filter.filter(msg.speed2);
+    msg.course1 = filter.filter(msg.course1);
+    msg.course2 = filter.filter(msg.course2);
 }

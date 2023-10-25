@@ -9,7 +9,8 @@
 //Если скорость равна нулю, изменение координат в пройденном пути не учитывать.
 
 int main(int argc, char* argv[]) {
-    NMEAParser parser("nmea.log");
+    //NMEAParser parser("nmea.log");
+    NMEAParser parser("VTG_and_WTG.log");
     double dist = parser.calculateTotalDistance();
     std::cout << dist << std::endl;
 
