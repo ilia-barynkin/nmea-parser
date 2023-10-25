@@ -1,43 +1,17 @@
-#include "nmea_msg.hpp"
-#include "msg_parser.hpp"
-// TODO: move to tests
-#include <fstream>
+#include <string>
 #include <iostream>
-#include <iomanip>
-#include <vector>
-#include <ctime>
-// int calculateChecksum(const std::string& str) {
-//     // TODO
-// }
+#include <fstream>
+#include <cmath>
 
-// TODO: move to tests
+#include "nmea_parser.hpp"
+
+//Написать программу, которая берет из файла nmea.log координаты и считает по ним пройденный путь.
+//Если скорость равна нулю, изменение координат в пройденном пути не учитывать.
 
 int main(int argc, char* argv[]) {
-    // std::ifstream file("/home/q/repos/pegas-test/test/trash/nmea.log");
-    // std::string str;
-
-    // while (getline(file, str))
-    // {
-    //     StringIterator si(str, ',');
-    //     char delimiter;
-    //     std::string tag;
-    //     si >> tag;
-
-    //     if (tag == "$GPGGA") {
-    //         GGAMsg msg;
-    //         si >> msg;
-    //     } else if (tag == "$GNVTG") {
-    //         VTGMsg msg;
-    //         si >> msg;
-    //     }
-
-    //     int checksum;
-    //     si >> std::hex >> checksum;
-
-    //     // TODO: check checksum
-    // }
-
-    std::cout << "hello world" << std::endl;
+    NMEAParser parser("nmea.log");
+    double dist = parser.calculateTotalDistance();
+    std::cout << dist << std::endl;
 
     return 0;
 }

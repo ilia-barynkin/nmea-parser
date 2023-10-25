@@ -1,2 +1,5 @@
-add_executable(nmea_parser_test main.cpp)
-target_link_libraries(nmea_parser_test nmea_parser_lib)
+add_executable(tests main.cpp)
+
+target_link_libraries(tests PRIVATE nmea_parser)
+
+target_include_directories(tests PUBLIC ../src)
