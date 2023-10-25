@@ -1,6 +1,7 @@
 #include <istream>
 #include <iomanip>
 #include <ctime>
+#include <cmath>
 
 #include "nmea_parser.hpp"
 
@@ -52,10 +53,39 @@ DelimitedStringIterator& operator>>(DelimitedStringIterator& input, GGAMsg& msg)
     return input;
 }
 
+double degToRad(double degrees) {
+    return degrees * M_PI / 180.0;
+}
+
+double NMEAParser::calculateDistance(const GGAMsg& coord0, const GGAMsg& coord1) {
+    double lat1 = degToRad(coord0.latitude);
+    double lon1 = degToRad(coord0.longitude);
+    double lat2 = degToRad(coord1.latitude);
+    double lon2 = degToRad(coord1.longitude);
+
+    double deltaLat = std::abs(lat2 - lat1);
+    double deltaLon = std::abs(lon2 - lon1);
+
+    double sinDeltaLatHalf = sin(deltaLat / 2.0);
+    double sinDeltaLonHalf = sin(deltaLon / 2.0);
+    double cosLat1 = cos(lat1);
+    double cosLat2 = cos(lat2);
+
+    double a = sinDeltaLatHalf * sinDeltaLatHalf;
+    double b = sinDeltaLonHalf * sinDeltaLonHalf * cosLat1 * cosLat2;
+    double c = 2.0 * atan2(sqrt(a + b), sqrt(1.0 - a - b));
+    
+    double ellipsoidAltitude = coord0.mslAltitude + coord0.geoidSeparation;
+    double deltaLatEllipsoidAltitude = deltaLat * ellipsoidAltitude;
+    double deltaLonEllipsoidAltitude = deltaLon * ellipsoidAltitude;
+    double distance = sqrt(deltaLatEllipsoidAltitude * deltaLatEllipsoidAltitude + deltaLonEllipsoidAltitude * deltaLonEllipsoidAltitude) * c;
+
+    return distance;
+}
+
 double NMEAParser::calculateTotalDistance() {
     double result = 0.0;
     std::string line;
-
     GGAMsg prevCoordMsg;
     VTGMsg speedMsg;
 
@@ -63,19 +93,20 @@ double NMEAParser::calculateTotalDistance() {
         DelimitedStringIterator si(line, ',');
         std::string tag;
         si >> tag;
-        GGAMsg coordMsg;
 
         if (tag == "$GPGGA") {
+            GGAMsg coordMsg;
             si >> coordMsg;
+
+            if (speedMsg.speed1 > EPSILON) {
+                result += calculateDistance(prevCoordMsg, coordMsg);
+                std::cout << result << std::endl;
+            }
+
+            prevCoordMsg = coordMsg;
         } else if (tag == "$GNVTG") {
             si >> speedMsg;
-
-            result += speedMsg.speed1 > EPSILON ? calculateDistance(prevCoordMsg, coordMsg) : 0.0;
         }
-
-        // TODO: check checksum
-
-        std::swap(prevCoordMsg, coordMsg);
     }
 
     return result;

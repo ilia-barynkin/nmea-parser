@@ -4,7 +4,6 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <cmath>
 
 #include "nmea_msg.hpp"
 
@@ -42,22 +41,7 @@ public:
 private:
     std::ifstream file;
 
-inline double calculateDistance(GGAMsg coord0, GGAMsg coord1) {
-    double geoidSeparation = coord0.geoidSeparation;
-    double lat1 = coord0.latitude * M_PI / 180.0;
-    double lon1 = coord0.longitude * M_PI / 180.0;
-    double lat2 = coord1.latitude * M_PI / 180.0;
-    double lon2 = coord1.longitude * M_PI / 180.0;
-
-    double deltaLat = lat2 - lat1;
-    double deltaLon = lon2 - lon1;
-
-    double a = sin(deltaLat / 2) * sin(deltaLat / 2) + cos(lat1) * cos(lat2) * sin(deltaLon / 2) * sin(deltaLon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    double distance = geoidSeparation * c;
-
-    return distance;
-}
+    double calculateDistance(const GGAMsg& coord0, const GGAMsg& coord1);
 };
 
 #endif // NMEA_PARSER_HPP
