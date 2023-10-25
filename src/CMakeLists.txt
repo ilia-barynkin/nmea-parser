@@ -1,0 +1,2 @@
+add_library(nmea_parser_lib INTERFACE)
+target_link_libraries(nmea_parser_lib INTERFACE nmea_parser)

@@ -1,0 +1,2 @@
+add_executable(nmea_parser_test main.cpp)
+target_link_libraries(nmea_parser_test nmea_parser_lib)

@@ -1,11 +1,9 @@
-#include "include/nmea_msg.hpp"
-#include "include/msg_parser.hpp"
-// TODO: move to tests
-#include <fstream>
+#include <ctime>
 #include <iostream>
 #include <iomanip>
-#include <vector>
-#include <ctime>
+
+#include "include/nmea_msg.hpp"
+#include "include/msg_parser.hpp"
 
 StringIterator& operator>>(StringIterator& is, VTGMsg& msg) {
     try
@@ -69,34 +67,4 @@ StringIterator& operator>>(StringIterator& is, GGAMsg& msg) {
 
 // int calculateChecksum(const std::string& str) {
 //     // TODO
-// }
-
-// TODO: move to tests
-
-// int main(int argc, char* argv[]) {
-//     std::ifstream file("/home/q/repos/pegas-test/test/trash/nmea.log");
-//     std::string str;
-
-//     while (getline(file, str))
-//     {
-//         StringIterator si(str, ',');
-//         char delimiter;
-//         std::string tag;
-//         si >> tag;
-
-//         if (tag == "$GPGGA") {
-//             GGAMsg msg;
-//             si >> msg;
-//         } else if (tag == "$GNVTG") {
-//             VTGMsg msg;
-//             si >> msg;
-//         }
-
-//         int checksum;
-//         si >> std::hex >> checksum;
-
-//         // TODO: check checksum
-//     }
-
-//     return 0;
 // }
