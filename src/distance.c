@@ -1,6 +1,6 @@
 #include "distance.h"
 
-double calculateDistance(gga_msg *coord0, gga_msg *coord1) {
+double calculate_distance(gga_msg *coord0, gga_msg *coord1) {
     double lat1 = deg_to_rad(coord0->latitude);
     double lon1 = deg_to_rad(coord0->longitude);
     double lat2 = deg_to_rad(coord1->latitude);
