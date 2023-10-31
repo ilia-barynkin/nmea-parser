@@ -9,7 +9,7 @@ typedef struct {
     butterworth_filter *filter;
     vec_vtg_msg* vtg_messages;
     vec_gga_msg* gga_messages;
-    char* input;
+    const char* input;
     char crc;
 } nmea_parser;
 
@@ -42,5 +42,13 @@ int parse_int(nmea_parser* parser);
 float parse_fract(nmea_parser* parser);
 
 char parse_hex(nmea_parser* parser);
+
+void parse_gga(nmea_parser* parser, gga_msg* msg);
+
+void parse_wtg(nmea_parser* parser, vtg_msg* msg);
+
+void parse_vtg(nmea_parser* parser, vtg_msg* msg);
+
+void parse_tag(nmea_parser* parser);
 
 #endif // NMEA_PARSER_H

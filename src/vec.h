@@ -6,6 +6,8 @@
 
 #include "nmea_msg.h"
 
+// TODO: Get rid of this BS, C is not capable of implementing generic types :)
+
 #define DECLARE_VECTOR(T) \
 \
 typedef struct vec_##T { \
@@ -20,7 +22,7 @@ vec_##T* vec_##T##_init(size_t cap) { \
     \
     if (!vec) { \
         errno = ENOMEM; \
-        return NULL; \
+        return (vec_##T*)NULL; \
     } \
     \
     vec->size = 0; \
@@ -37,40 +39,13 @@ vec_##T* vec_##T##_push(vec_##T* vec, T value) { \
         \
         if (!vec->data) { \
             errno = ENOMEM; \
-            return NULL; \
+            return (vec_##T*)NULL; \
         } \
     } \
     \
     vec->data[vec->size++] = value; \
     return vec; \
 } \
-\
-/* Returns a pointer to the last element in the vector without assigning a value*/ \
-T* vec_##T##_push_empty(vec_##T* vec) { \
-    if (vec->cap == vec->size) { \
-        vec->cap *= 2; \
-        vec_##T* result = (vec_##T*)realloc(vec, sizeof(size_t) + vec->cap * sizeof(T)); \
-        \
-        if (!vec->data) { \
-            errno = ENOMEM; \
-            return NULL; \
-        } \
-    } \
-    \
-    vec->size++; \
-    return back(vec); \
-} \
-\
-/* Removes the last element from the vector */ \
-vec_##T* vec_##T##_pop(vec_##T* vec) { \
-    if (vec->size == 0) { \
-        return vec; \
-    } \
-    \
-    vec->size--; \
-    return vec; \
-} \
-\
 /* Returns a pointer to the last element in the vector */ \
 T* vec_##T##_back(vec_##T* vec) { \
     return vec->data + vec->size - 1; \
@@ -87,6 +62,33 @@ T* vec_##T##_at(vec_##T* vec, size_t index) { \
 T* vec_##T##_front(vec_##T* vec) { \
     return vec->data; \
 }\
+\
+/* Returns a pointer to the last element in the vector without assigning a value*/ \
+T* vec_##T##_push_empty(vec_##T* vec) { \
+    if (vec->cap == vec->size) { \
+        vec->cap *= 2; \
+        vec_##T* result = (vec_##T*)realloc(vec, sizeof(size_t) + vec->cap * sizeof(T)); \
+        \
+        if (!vec->data) { \
+            errno = ENOMEM; \
+            return (T*)NULL; \
+        } \
+    } \
+    \
+    vec->size++; \
+    return vec_##T##_back(vec); \
+} \
+\
+/* Removes the last element from the vector */ \
+vec_##T* vec_##T##_pop(vec_##T* vec) { \
+    if (vec->size == 0) { \
+        return vec; \
+    } \
+    \
+    vec->size--; \
+    return vec; \
+} \
+\
 void vec_##T##_free(vec_##T* vec) { \
     free(vec->data); \
     free(vec); \

@@ -1,6 +1,7 @@
 #ifndef DISTANCE_H
 #define DISTANCE_H
 
+#include <stdlib.h>
 #include <math.h>
 
 #include "nmea_msg.h"
