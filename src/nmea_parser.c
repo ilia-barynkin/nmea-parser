@@ -5,6 +5,7 @@
 #include "nmea_msg.h"
 #include "nmea_parser.h"
 #include "config.h"
+#include "filters.h"
 
 nmea_parser* init_nmea_parser(const char* data) {
     nmea_parser* parser = (nmea_parser*) malloc(sizeof(nmea_parser));

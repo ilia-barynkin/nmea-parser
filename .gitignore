@@ -2,3 +2,5 @@
 test/trash
 build
 .tk
+.editorconfig
+.gitignore

@@ -31,4 +31,16 @@ void parse_next(nmea_parser* parser);
 
 void nmea_parser_free(nmea_parser* parser);
 
+double parse_time(nmea_parser* parser);
+
+float parse_float(nmea_parser* parser);
+
+double parse_double(nmea_parser* parser);
+
+int parse_int(nmea_parser* parser);
+
+float parse_fract(nmea_parser* parser);
+
+char parse_hex(nmea_parser* parser);
+
 #endif // NMEA_PARSER_H
