@@ -1,3 +1,7 @@
+# Ответы на тестовые задания здесь: 
+[Ответы](./issues/README.md)
+Текущая версия библиотеки переписана на ANSI C и еще не протестирована. Ответы представлены с использованием предыдущего решения на C++.
+
 # NMEA Parser with Butterworth Filtering
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
