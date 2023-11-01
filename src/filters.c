@@ -11,6 +11,15 @@ butterworth_filter* init_butterworth_filter(int order, float cutoffFrequency, fl
         return NULL;
     }
 
+    filter->a_coefficients = malloc(order * sizeof(float));
+    filter->b_coefficients = malloc(order * sizeof(float));
+
+    if (!filter->a_coefficients || !filter->b_coefficients) {
+        free(filter);
+        errno = ENOMEM;
+        return NULL;
+    }
+
     filter->order = order;
     filter->cutoff_frequency = cutoffFrequency;
     filter->sampling_frequency = samplingFrequency;

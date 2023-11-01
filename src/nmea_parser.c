@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <memory.h>
 #include <errno.h>
 #include <string.h>
@@ -6,6 +7,18 @@
 #include "nmea_parser.h"
 #include "config.h"
 #include "filters.h"
+
+char consume(nmea_parser* parser) {
+    return *(parser->input++) ^ (parser->crc ^= *parser->input);
+}
+
+char consume_many(nmea_parser* parser, int count) {
+    for (int i = 0; i < count; i++) {
+        consume(parser);
+    }
+    
+    return consume(parser);
+}
 
 nmea_parser* init_nmea_parser(const char* data) {
     nmea_parser* parser = (nmea_parser*) malloc(sizeof(nmea_parser));
@@ -16,39 +29,41 @@ nmea_parser* init_nmea_parser(const char* data) {
     }
 
     parser->filter = init_butterworth_filter(BUTTERWORTH_DEFULT_ORDER, BUTTERWORTH_DEFULT_CUTOFF_FREQUENCY, BUTTERWORTH_DEFULT_SAMPLING_FREQUENCY);
-    parser->vtg_messages = vec_vtg_msg_init(MSG_BUFFER_LEN);
-    parser->gga_messages = vec_gga_msg_init(MSG_BUFFER_LEN);
     parser->input = data;
     parser->crc = 0x00;
 
     return parser;
 }
 
-void parse_next(nmea_parser* parser) {
-    parse_tag(parser);
-    
-    do {
-        if(consume(parser) == ENDL_SYM || *parser->input ==  EOF_SYM)
-            break;
-    } while (true);
-}
-
-void parse_tag(nmea_parser* parser) {
+void* parse_next(nmea_parser* parser, MSG_TYPE* result_type) {
+    *result_type = ERR;
+    void *msg = NULL;
     consume_many(parser, MSG_TAG_LEN);
     
     if (parser->crc == VTG_CHECKSUM) {
         consume(parser); // delimiter
-        vtg_msg *msg = vec_vtg_msg_push_empty(parser->vtg_messages);
-        parse_vtg(parser, msg);
+        msg = malloc(sizeof(vtg_msg));
+        parse_vtg(parser, (vtg_msg*)msg);
+        *result_type = VTG;
     } else if (parser->crc == WTG_CHECKSUM) {
         consume(parser); // delimiter
-        vtg_msg *msg = vec_vtg_msg_push_empty(parser->vtg_messages);
-        parse_wtg(parser, msg);
+        msg = malloc(sizeof(vtg_msg));
+        parse_wtg(parser, (vtg_msg*)msg);
+        *result_type = WTG;
     } else if (parser->crc == GGA_CHECKSUM) {
         consume(parser); // delimiter
-        gga_msg *msg = vec_gga_msg_push_empty(parser->gga_messages);
-        parse_gga(parser, msg);
+        msg = malloc(sizeof(gga_msg));
+        parse_gga(parser, (gga_msg*)msg);
+        *result_type = GGA;
     }
+
+    do {
+        if(consume(parser) == ENDL_SYM || *parser->input ==  EOF_SYM) {
+            break;
+        }
+    } while (true);
+
+    return msg;
 }
 
 void parse_vtg(nmea_parser* parser, vtg_msg* msg) {
@@ -160,7 +175,5 @@ char parse_hex(nmea_parser* parser) {
 
 void nmea_parser_free(nmea_parser* parser) {
     butterworth_filter_free(parser->filter);
-    vec_vtg_msg_free(parser->vtg_messages);
-    vec_gga_msg_free(parser->gga_messages);
     free(parser);
 }

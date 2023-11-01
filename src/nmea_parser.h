@@ -7,27 +7,15 @@
 
 typedef struct {
     butterworth_filter *filter;
-    vec_vtg_msg* vtg_messages;
-    vec_gga_msg* gga_messages;
     const char* input;
     char crc;
 } nmea_parser;
 
-inline char consume(nmea_parser* parser) {
-    return *(parser->input++) ^ (parser->crc ^= *parser->input);
-}
+char consume(nmea_parser* parser);
 
-inline char consume_many(nmea_parser* parser, int count) {
-    for (int i = 0; i < count; i++) {
-        consume(parser);
-    }
-    
-    return consume(parser);
-}
+char consume_many(nmea_parser* parser, int count);
 
 nmea_parser* init_nmea_parser(const char* data);
-
-void parse_next(nmea_parser* parser);
 
 void nmea_parser_free(nmea_parser* parser);
 
@@ -49,6 +37,6 @@ void parse_wtg(nmea_parser* parser, vtg_msg* msg);
 
 void parse_vtg(nmea_parser* parser, vtg_msg* msg);
 
-void parse_tag(nmea_parser* parser);
+void* parse_next(nmea_parser* parser, MSG_TYPE* result_type);
 
 #endif // NMEA_PARSER_H

@@ -3,6 +3,9 @@
 
 #include "time.h"
 #include "stdbool.h"
+#include "config.h"
+
+typedef enum MSG_TYPE {VTG, GGA, WTG, ERR} MSG_TYPE;
 
 typedef struct vtg_msg {
     float course_1;                  // Measured heading in degrees
