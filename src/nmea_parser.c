@@ -13,7 +13,7 @@ char consume(nmea_parser* parser) {
 }
 
 char consume_many(nmea_parser* parser, int count) {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count - 1; i++) {
         consume(parser);
     }
     
